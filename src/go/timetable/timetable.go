@@ -18,6 +18,14 @@ const (
 	Unavailable
 )
 
+type TimeSheeter interface {
+	AddSlot(t TimeSlot) error
+	RemoveSlotAtIndex(index int) error
+	AvailabilityAt(t time.Time) SlotStatus
+	GetSlots() []TimeSlot
+	SlotCount() int
+}
+
 type TimeSpan struct {
 	Start time.Time
 	End   time.Time
@@ -96,7 +104,7 @@ func (ts *TimeSheet) AddSlot(t TimeSlot) error {
 	return nil
 }
 
-func (ts *TimeSheet) DelSlotAtIndex(index int) error {
+func (ts *TimeSheet) RemoveSlotAtIndex(index int) error {
 	if index < 0 || index >= len(ts.Slots) {
 		return ErrInvalidSlotIndex
 	}
@@ -121,4 +129,11 @@ func (ts *TimeSheet) FindSlotsByStatus(status SlotStatus) []TimeSlot {
 		}
 	}
 	return slots
+}
+
+func (ts *TimeSheet) GetSlots() []TimeSlot {
+	return slices.Clone(ts.Slots)
+}
+func (ts *TimeSheet) SlotCount() int {
+	return len(ts.Slots)
 }
