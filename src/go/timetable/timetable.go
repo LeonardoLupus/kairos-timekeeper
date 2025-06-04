@@ -13,8 +13,8 @@ var ErrInvalidTimeIntersect = errors.New("invalid time interval (intervals is in
 var ErrInvalidSlotIndex = errors.New("invalid slot index")
 
 const (
-	Neutral SlotStatus = iota
-	Preferred
+	Preferred SlotStatus = iota
+	Neutral
 	Unavailable
 )
 
@@ -24,6 +24,7 @@ type TimeSheeter interface {
 	AvailabilityAt(t time.Time) SlotStatus
 	GetSlots() []TimeSlot
 	SlotCount() int
+	AvailabilityAtSlot(TimeSpan) SlotStatus
 }
 
 type TimeSpan struct {
@@ -131,9 +132,22 @@ func (ts *TimeSheet) FindSlotsByStatus(status SlotStatus) []TimeSlot {
 	return slots
 }
 
+func (ts *TimeSheet) AvailabilityAtSlot(t TimeSpan) SlotStatus {
+	status := Preferred
+	for _, v := range ts.Slots {
+		if v.Overlaps(t) {
+			if v.Status > status {
+				status = v.Status
+			}
+		}
+	}
+	return status
+}
+
 func (ts *TimeSheet) GetSlots() []TimeSlot {
 	return slices.Clone(ts.Slots)
 }
+
 func (ts *TimeSheet) SlotCount() int {
 	return len(ts.Slots)
 }
