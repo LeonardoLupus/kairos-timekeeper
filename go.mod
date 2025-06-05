@@ -1,3 +1,3 @@
-module github.com/LeonardoLupus/kairos-timekeeper
+module kairos-timekeeper
 
 go 1.24.1

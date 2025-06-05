@@ -24,7 +24,7 @@ type TimeSheeter interface {
 	AvailabilityAt(t time.Time) SlotStatus
 	GetSlots() []TimeSlot
 	SlotCount() int
-	AvailabilityAtSlot(TimeSpan) SlotStatus
+	AvailabilityAtSlot(t TimeSpan) SlotStatus
 }
 
 type TimeSpan struct {
@@ -76,6 +76,10 @@ func (tsp *TimeSpan) ChangeSpan(tStart, tEnd time.Time) error {
 
 func (ts *TimeSlot) ChangeStatus(s SlotStatus) {
 	ts.Status = s
+}
+
+func NewTimeSheet() TimeSheeter {
+	return &TimeSheet{}
 }
 
 func (ts *TimeSheet) sortSlots() {
