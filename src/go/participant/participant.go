@@ -2,31 +2,22 @@ package participant
 
 import (
 	"errors"
-	"kairos-timekeeper/src/go/timehelp"
-	"kairos-timekeeper/src/go/timetable"
+	"kairos-timekeeper/src/go/interfaces"
+	"kairos-timekeeper/src/go/time/timebase"
+	"kairos-timekeeper/src/go/time/timehelp"
+	"kairos-timekeeper/src/go/time/timetable"
 )
 
 var ErrChangeTimezone = errors.New("invalid location to try change timezone")
-
-type Participanter interface {
-	GetID() int64
-	GetUsername() string
-	GetTimezone() string
-	GetSchedule() timetable.TimeSheeter
-
-	AddTimeSlot(t timetable.TimeSlot) error
-	RemoveTimeSlotAtIndex(index int) error
-	ChangeTimezone(zoneName string) error
-}
 
 type participant struct {
 	ID       int64
 	Username string
 	Timezone string
-	Schedule timetable.TimeSheeter
+	Schedule interfaces.Scheduler
 }
 
-func NewParticipant(id int64, name, location string) (Participanter, error) {
+func NewParticipant(id int64, name, location string) (interfaces.Participanter, error) {
 	_, err := timehelp.GetLocation(location)
 	if err != nil {
 		return nil, err
@@ -52,11 +43,11 @@ func (p *participant) GetTimezone() string {
 	return p.Timezone
 }
 
-func (p *participant) GetSchedule() timetable.TimeSheeter {
+func (p *participant) GetSchedule() interfaces.Scheduler {
 	return p.Schedule
 }
 
-func (p *participant) AddTimeSlot(t timetable.TimeSlot) error {
+func (p *participant) AddTimeSlot(t timebase.TimeSlot) error {
 	tStart, err0 := timehelp.SetTimeZone(t.Start, p.Timezone)
 	tEnd, err1 := timehelp.SetTimeZone(t.End, p.Timezone)
 
@@ -67,9 +58,9 @@ func (p *participant) AddTimeSlot(t timetable.TimeSlot) error {
 	tStart = tStart.UTC()
 	tEnd = tEnd.UTC()
 
-	return p.Schedule.AddSlot(timetable.TimeSlot{
+	return p.Schedule.AddSlot(timebase.TimeSlot{
 		Status: t.Status,
-		TimeSpan: timetable.TimeSpan{
+		TimeSpan: timebase.TimeSpan{
 			Start: tStart,
 			End:   tEnd,
 		},
