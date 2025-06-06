@@ -3,12 +3,15 @@ package timetable
 import (
 	"kairos-timekeeper/src/go/interfaces"
 	"kairos-timekeeper/src/go/time/timebase"
+	"kairos-timekeeper/src/go/types"
 	"slices"
 	"time"
 )
 
 type TimeSheet struct {
-	Slots []timebase.TimeSlot
+	UserID types.UserID
+	ChatID types.ChatID
+	Slots  []timebase.TimeSlot
 }
 
 func NewTimeSheet() interfaces.Scheduler {
@@ -28,6 +31,18 @@ func (ts *TimeSheet) IsIntersect(span timebase.TimeSpan) bool {
 		}
 	}
 	return false
+}
+
+func (ts *TimeSheet) GetUserID() types.UserID {
+	return ts.UserID
+}
+
+func (ts *TimeSheet) GetChatID() types.ChatID {
+	return ts.ChatID
+}
+
+func (ts *TimeSheet) GetID() (types.UserID, types.ChatID) {
+	return ts.GetUserID(), ts.GetChatID()
 }
 
 func (ts *TimeSheet) AddSlot(t timebase.TimeSlot) error {

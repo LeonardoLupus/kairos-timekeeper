@@ -6,24 +6,27 @@ import (
 	"kairos-timekeeper/src/go/time/timebase"
 	"kairos-timekeeper/src/go/time/timehelp"
 	"kairos-timekeeper/src/go/time/timetable"
+	"kairos-timekeeper/src/go/types"
 )
 
 var ErrChangeTimezone = errors.New("invalid location to try change timezone")
 
 type participant struct {
-	ID       int64
+	UserID   types.UserID
+	ChatID   types.ChatID
 	Username string
 	Timezone string
 	Schedule interfaces.Scheduler
 }
 
-func NewParticipant(id int64, name, location string) (interfaces.Participanter, error) {
+func NewParticipant(userId types.UserID, chatId types.ChatID, name, location string) (interfaces.Participanter, error) {
 	_, err := timehelp.GetLocation(location)
 	if err != nil {
 		return nil, err
 	}
 	p := participant{
-		ID:       id,
+		UserID:   userId,
+		ChatID:   chatId,
 		Username: name,
 		Timezone: location,
 		Schedule: timetable.NewTimeSheet(),
@@ -31,8 +34,16 @@ func NewParticipant(id int64, name, location string) (interfaces.Participanter, 
 	return &p, nil
 }
 
-func (p *participant) GetID() int64 {
-	return p.ID
+func (p *participant) GetUserID() types.UserID {
+	return p.UserID
+}
+
+func (p *participant) GetChatID() types.ChatID {
+	return p.ChatID
+}
+
+func (p *participant) GetID() (types.UserID, types.ChatID) {
+	return p.GetUserID(), p.GetChatID()
 }
 
 func (p *participant) GetUsername() string {
@@ -78,4 +89,8 @@ func (p *participant) ChangeTimezone(zoneName string) error {
 	}
 	p.Timezone = zoneName
 	return nil
+}
+
+func (p *participant) ChangeUsername(name string) {
+	p.Username = name
 }
