@@ -35,6 +35,10 @@ func (tsp TimeSpan) Overlaps(other TimeSpan) bool {
 	return tsp.Start.Before(other.End) && tsp.End.After(other.Start)
 }
 
+func IsValidSpan(t TimeSpan) bool {
+	return t.Start.Before(t.End)
+}
+
 func (tsp *TimeSpan) ChangeStart(t time.Time) error {
 	if t.Before(tsp.End) {
 		tsp.Start = t

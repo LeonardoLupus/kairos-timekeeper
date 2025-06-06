@@ -50,15 +50,6 @@ func (ts *TimeSheet) RemoveSlotAtIndex(index int) error {
 	return nil
 }
 
-func (ts *TimeSheet) AvailabilityAt(t time.Time) timebase.SlotStatus {
-	for _, v := range ts.Slots {
-		if v.Contains(t) {
-			return v.Status
-		}
-	}
-	return timebase.Neutral
-}
-
 func (ts *TimeSheet) FindSlotsByStatus(status timebase.SlotStatus) []timebase.TimeSlot {
 	slots := make([]timebase.TimeSlot, 0, len(ts.Slots))
 	for _, v := range ts.Slots {
@@ -67,6 +58,15 @@ func (ts *TimeSheet) FindSlotsByStatus(status timebase.SlotStatus) []timebase.Ti
 		}
 	}
 	return slots
+}
+
+func (ts *TimeSheet) AvailabilityAt(t time.Time) timebase.SlotStatus {
+	for _, v := range ts.Slots {
+		if v.Contains(t) {
+			return v.Status
+		}
+	}
+	return timebase.Neutral
 }
 
 func (ts *TimeSheet) AvailabilityAtSlot(t timebase.TimeSpan) timebase.SlotStatus {
