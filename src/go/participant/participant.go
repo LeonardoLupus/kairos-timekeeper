@@ -3,9 +3,7 @@ package participant
 import (
 	"errors"
 	"kairos-timekeeper/src/go/interfaces"
-	"kairos-timekeeper/src/go/time/timebase"
 	"kairos-timekeeper/src/go/time/timehelp"
-	"kairos-timekeeper/src/go/time/timetable"
 	"kairos-timekeeper/src/go/types"
 )
 
@@ -16,7 +14,6 @@ type participant struct {
 	ChatID   types.ChatID
 	Username string
 	Timezone string
-	Schedule interfaces.Scheduler
 }
 
 func NewParticipant(userId types.UserID, chatId types.ChatID, name, location string) (interfaces.Participanter, error) {
@@ -29,7 +26,6 @@ func NewParticipant(userId types.UserID, chatId types.ChatID, name, location str
 		ChatID:   chatId,
 		Username: name,
 		Timezone: location,
-		Schedule: timetable.NewTimeSheet(),
 	}
 	return &p, nil
 }
@@ -52,34 +48,6 @@ func (p *participant) GetUsername() string {
 
 func (p *participant) GetTimezone() string {
 	return p.Timezone
-}
-
-func (p *participant) GetSchedule() interfaces.Scheduler {
-	return p.Schedule
-}
-
-func (p *participant) AddTimeSlot(t timebase.TimeSlot) error {
-	tStart, err0 := timehelp.SetTimeZone(t.Start, p.Timezone)
-	tEnd, err1 := timehelp.SetTimeZone(t.End, p.Timezone)
-
-	if err0 != nil || err1 != nil {
-		return err0
-	}
-
-	tStart = tStart.UTC()
-	tEnd = tEnd.UTC()
-
-	return p.Schedule.AddSlot(timebase.TimeSlot{
-		Status: t.Status,
-		TimeSpan: timebase.TimeSpan{
-			Start: tStart,
-			End:   tEnd,
-		},
-	})
-}
-
-func (p *participant) RemoveTimeSlotAtIndex(index int) error {
-	return p.Schedule.RemoveSlotAtIndex(index)
 }
 
 func (p *participant) ChangeTimezone(zoneName string) error {

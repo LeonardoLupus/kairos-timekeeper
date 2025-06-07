@@ -13,9 +13,9 @@ type Scheduler interface {
 	AddSlot(t timebase.TimeSlot) error
 	RemoveSlotAtIndex(index int) error
 	AvailabilityAt(t time.Time) timebase.SlotStatus
+	AvailabilityAtSlot(t timebase.TimeSpan) timebase.SlotStatus
 	GetSlots() []timebase.TimeSlot
 	SlotCount() int
-	AvailabilityAtSlot(t timebase.TimeSpan) timebase.SlotStatus
 }
 
 type Participanter interface {
@@ -25,8 +25,6 @@ type Participanter interface {
 	GetUsername() string
 	GetTimezone() string
 
-	AddTimeSlot(t timebase.TimeSlot) error
-	RemoveTimeSlotAtIndex(index int) error
 	ChangeTimezone(zoneName string) error
 	ChangeUsername(name string)
 }

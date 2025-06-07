@@ -14,8 +14,12 @@ type TimeSheet struct {
 	Slots  []timebase.TimeSlot
 }
 
-func NewTimeSheet() interfaces.Scheduler {
-	return &TimeSheet{}
+func NewTimeSheet(user types.UserID, chat types.ChatID, slots []timebase.TimeSlot) interfaces.Scheduler {
+	return &TimeSheet{
+		UserID: user,
+		ChatID: chat,
+		Slots:  slots,
+	}
 }
 
 func (ts *TimeSheet) sortSlots() {
