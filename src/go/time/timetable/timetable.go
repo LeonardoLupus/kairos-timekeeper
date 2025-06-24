@@ -10,20 +10,18 @@ import (
 
 type TimeSheet struct {
 	UserID types.UserID
-	ChatID types.ChatID
-	Slots  []timebase.TimeSlot
+	Slots  []timebase.TimeChatSlot
 }
 
-func NewTimeSheet(user types.UserID, chat types.ChatID, slots []timebase.TimeSlot) interfaces.Scheduler {
+func NewTimeSheet(user types.UserID, slots []timebase.TimeChatSlot) interfaces.Scheduler {
 	return &TimeSheet{
 		UserID: user,
-		ChatID: chat,
 		Slots:  slots,
 	}
 }
 
 func (ts *TimeSheet) sortSlots() {
-	slices.SortFunc(ts.Slots, func(a, b timebase.TimeSlot) int {
+	slices.SortFunc(ts.Slots, func(a, b timebase.TimeChatSlot) int {
 		return a.Start.Compare(b.Start)
 	})
 }
@@ -41,15 +39,7 @@ func (ts *TimeSheet) GetUserID() types.UserID {
 	return ts.UserID
 }
 
-func (ts *TimeSheet) GetChatID() types.ChatID {
-	return ts.ChatID
-}
-
-func (ts *TimeSheet) GetID() (types.UserID, types.ChatID) {
-	return ts.GetUserID(), ts.GetChatID()
-}
-
-func (ts *TimeSheet) AddSlot(t timebase.TimeSlot) error {
+func (ts *TimeSheet) AddSlot(t timebase.TimeChatSlot) error {
 	if !t.End.After(t.Start) {
 		return timebase.ErrInvalidTimeInterval
 	}
@@ -69,8 +59,8 @@ func (ts *TimeSheet) RemoveSlotAtIndex(index int) error {
 	return nil
 }
 
-func (ts *TimeSheet) FindSlotsByStatus(status timebase.SlotStatus) []timebase.TimeSlot {
-	slots := make([]timebase.TimeSlot, 0, len(ts.Slots))
+func (ts *TimeSheet) FindSlotsByStatus(status timebase.SlotStatus) []timebase.TimeChatSlot {
+	slots := make([]timebase.TimeChatSlot, 0, len(ts.Slots))
 	for _, v := range ts.Slots {
 		if v.Status == status {
 			slots = append(slots, v)
@@ -100,7 +90,7 @@ func (ts *TimeSheet) AvailabilityAtSlot(t timebase.TimeSpan) timebase.SlotStatus
 	return status
 }
 
-func (ts *TimeSheet) GetSlots() []timebase.TimeSlot {
+func (ts *TimeSheet) GetSlots() []timebase.TimeChatSlot {
 	return slices.Clone(ts.Slots)
 }
 

@@ -2,6 +2,7 @@ package timebase
 
 import (
 	"errors"
+	"kairos-timekeeper/src/go/types"
 	"time"
 )
 
@@ -25,6 +26,11 @@ type TimeSpan struct {
 type TimeSlot struct {
 	TimeSpan
 	Status SlotStatus
+}
+
+type TimeChatSlot struct {
+	TimeSlot
+	Chat types.ChatID
 }
 
 func (tsp *TimeSpan) Contains(t time.Time) bool {

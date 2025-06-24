@@ -8,13 +8,11 @@ import (
 
 type Scheduler interface {
 	GetUserID() types.UserID
-	GetChatID() types.ChatID
-	GetID() (types.UserID, types.ChatID)
-	AddSlot(t timebase.TimeSlot) error
+	AddSlot(t timebase.TimeChatSlot) error
 	RemoveSlotAtIndex(index int) error
 	AvailabilityAt(t time.Time) timebase.SlotStatus
 	AvailabilityAtSlot(t timebase.TimeSpan) timebase.SlotStatus
-	GetSlots() []timebase.TimeSlot
+	GetSlots() []timebase.TimeChatSlot
 	SlotCount() int
 }
 
